@@ -30,9 +30,16 @@ dev = [
     "pytest (>=8.4.2,<9.0.0)",
     "pytest-cov (>=7.0.0,<8.0.0)"
 ]
+
 [tool.black]
 line-length = 119
-exclude = ".git"
+exclude = '''
+(
+    \.git
+  | \.venv
+  | __pycache__
+)
+'''
 
 [tool.isort]
 line_length = 119
