@@ -2,11 +2,11 @@
 
 Проект **Bank Widget** предназначен для работы с банковскими операциями клиента.  
 Он позволяет маскировать номера карт и счетов, фильтровать и сортировать транзакции,  
-а также эффективно работать с большими массивами данных с помощью генераторов.
+а также работать с большими массивами данных с помощью генераторов и декораторов.
 
 ---
 
-##  Установка
+## Установка
 
 Клонируйте репозиторий:
 
@@ -23,98 +23,120 @@ poetry install
 bash
 Копировать код
 poetry run python main.py
- Функции проекта
- mask_account_card(data: str) -> str
-Принимает строку с типом и номером карты или счёта, возвращает замаскированный номер.
+Основные функции проекта
+mask_account_card(data: str) -> str
+Принимает строку с типом и номером карты или счёта и возвращает замаскированный номер.
 
 Примеры:
 
 python
 Копировать код
 mask_account_card("Visa Platinum 7000792289606361")
-# "Visa Platinum 7000 79** **** 6361"
+# Visa Platinum 7000 79** **** 6361
 
 mask_account_card("Счет 73654108430135874305")
-# "Счет **4305"
- get_date(date_str: str) -> str
-Конвертирует дату ISO-формата в формат ДД.ММ.ГГГГ.
+# Счет **4305
+get_date(date_str: str) -> str
+Преобразует дату из ISO-формата в формат ДД.ММ.ГГГГ.
 
 python
 Копировать код
 get_date("2024-03-11T02:26:18.671407")
-# "11.03.2024"
- get_mask_card_number(card_number: int) -> str
+# 11.03.2024
+get_mask_card_number(card_number: int) -> str
 Маскирует номер банковской карты.
 
- get_mask_account(account_number: int) -> str
+get_mask_account(account_number: int) -> str
 Маскирует номер банковского счёта.
 
- filter_by_state(operations, state="EXECUTED")
-Фильтрует операции по полю state.
+filter_by_state(operations, state="EXECUTED")
+Фильтрует операции по статусу.
 
- sort_by_date(operations, reverse=True)
-Сортирует операции по дате (по умолчанию — по убыванию).
+sort_by_date(operations, reverse=True)
+Сортирует операции по дате.
 
- Модуль generators
-Модуль содержит функции и генераторы для обработки больших массивов транзакций.
+Модуль generators
+Модуль содержит генераторы для обработки больших массивов транзакций.
 
- filter_by_currency(transactions, currency)
-Возвращает итератор, который выдаёт транзакции с указанной валютой.
-
-Пример:
+filter_by_currency(transactions, currency)
+Возвращает итератор транзакций с указанной валютой.
 
 python
 Копировать код
-usd_tx = filter_by_currency(transactions, "USD")
-print(next(usd_tx))
-print(next(usd_tx))
- transaction_descriptions(transactions)
-Генератор, который последовательно выдаёт описания операций.
-
-Пример:
+usd_transactions = filter_by_currency(transactions, "USD")
+print(next(usd_transactions))
+transaction_descriptions(transactions)
+Генератор описаний операций.
 
 python
 Копировать код
 for desc in transaction_descriptions(transactions):
     print(desc)
- card_number_generator(start, stop)
+card_number_generator(start, stop)
 Генератор номеров карт в формате:
 
 nginx
 Копировать код
 XXXX XXXX XXXX XXXX
-Пример:
-
 python
 Копировать код
-for num in card_number_generator(1, 5):
-    print(num)
- Тестирование
-В проекте используются:
+for number in card_number_generator(1, 5):
+    print(number)
+Модуль decorators
+Модуль содержит декораторы для расширения функциональности функций.
 
-pytest
+log(filename: Optional[str] = None)
+Декоратор логирует выполнение функции.
 
-pytest-cov
+При успешном выполнении записывает имя функции и статус ok
 
-отчёт покрытия создаётся в формате HTML
+При ошибке записывает имя функции, тип ошибки и входные параметры
 
-Запуск тестов:
+Может писать лог в консоль или в файл
 
-bash
+Логирование в консоль:
+python
 Копировать код
-poetry run pytest
-Запуск тестов с покрытием:
+from src.decorators.log import log
 
-bash
-Копировать код
-poetry run pytest --cov=src --cov-report=html
-После выполнения отчёт доступен в:
+@log()
+def add(a, b):
+    return a + b
 
-bash
+add(1, 2)
+# add ok
+Логирование в файл:
+python
 Копировать код
-htmlcov/index.html
- Покрытие тестами: 100%
-Покрыты тестами:
+@log(filename="app.log")
+def multiply(a, b):
+    return a * b
+
+multiply(2, 3)
+# Запись в app.log: multiply ok
+Обработка ошибок:
+python
+Копировать код
+@log()
+def divide(a, b):
+    return a / b
+
+divide(1, 0)
+# divide error: ZeroDivisionError. Inputs: (1, 0), {}
+Тестирование
+В проекте используется pytest.
+
+Все функции покрыты тестами, включая:
+
+успешные сценарии
+
+обработку ошибок
+
+Покрытие тестами: 100%
+
+HTML-отчёт о покрытии тестами находится в папке htmlcov.
+
+Покрытые модули:
 
 masks.py
 
@@ -124,5 +146,7 @@ widget.py
 
 generators.py
 
- Лицензия
-Проект предоставляется "как есть", без каких-либо гарантий.
+decorators/log.py
+
+Лицензия
+Проект предоставляется «как есть», без каких-либо гарантий.
