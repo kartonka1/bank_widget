@@ -12,10 +12,7 @@ def filter_by_state(operations: List[Dict[str, Any]], state: str = "EXECUTED") -
     return [op for op in operations if op.get("state") == state]
 
 
-from typing import Dict, List
-
-
-def sort_by_date(data: List[Dict], reverse: bool = True) -> List[Dict]:
+def sort_by_date(data: List[Dict[str, Any]], reverse: bool = True) -> List[Dict[str, Any]]:
     """
     Сортирует список словарей по ключу 'date'.
 
