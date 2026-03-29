@@ -40,7 +40,6 @@ ENV/
 poetry.lock
 
 # Test and coverage
-.coverage
 .tox/
 .nox/
 coverage.xml
